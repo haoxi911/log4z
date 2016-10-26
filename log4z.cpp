@@ -1748,7 +1748,7 @@ bool LogerManager::openLogger(LogData * pLog)
 
 			folderPath = path.substr(0, path.rfind("/") + 1);
 #ifdef _WIN32
-			WIN32_FIND_DATA fdd;
+			WIN32_FIND_DATAA fdd;
 			HANDLE hFind;
 
 			hFind = ::FindFirstFileA((folderPath + "*.log").c_str(), &fdd);
