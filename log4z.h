@@ -248,7 +248,7 @@ const int LOG4Z_LOG_CONTAINER_DEPTH = 5;
 const int LOG4Z_LOG_QUEUE_LIMIT_SIZE = 10000;
 
 //! all logger synchronous output or not
-const bool LOG4Z_ALL_SYNCHRONOUS_OUTPUT = false;
+const bool LOG4Z_ALL_SYNCHRONOUS_OUTPUT = true;
 //! all logger synchronous display to the windows debug output
 const bool LOG4Z_ALL_DEBUGOUTPUT_DISPLAY = false;
 
