@@ -1738,6 +1738,38 @@ bool LogerManager::openLogger(LogData * pLog)
             pLogger->_outfile = false;
             return false;
         }
+
+		// this section is used to wipe additional log files from current folder.
+		if (LOG4Z_LOG_MAXIMUM_FILE_COUNT_PER_FOLDER > 0)
+		{
+			typedef std::pair<FILETIME, std::string> fileEntry;
+			std::string folderPath;
+			std::list<fileEntry> logFiles;
+
+			folderPath = path.substr(0, path.rfind("/") + 1);
+#ifdef _WIN32
+			WIN32_FIND_DATA fdd;
+			HANDLE hFind;
+
+			hFind = ::FindFirstFileA((folderPath + "*.log").c_str(), &fdd);
+			if (INVALID_HANDLE_VALUE != hFind)
+			{
+				do logFiles.push_back(std::make_pair(fdd.ftCreationTime, folderPath + fdd.cFileName));
+				while (::FindNextFileA(hFind, &fdd));
+
+				::FindClose(hFind);
+			}
+			logFiles.sort([](const fileEntry &a, const fileEntry &b) { return ::CompareFileTime(&a.first, &b.first) < 0; });
+#else
+			// ToDo.
+#endif
+			while(logFiles.size() > LOG4Z_LOG_MAXIMUM_FILE_COUNT_PER_FOLDER)
+			{
+				pLogger->_handle.removeFile(logFiles.front().second.c_str());
+				logFiles.pop_front();
+			}
+		}
+
 		if (pLogger->_logReserveTime > 0 )
 		{
 			if (pLogger->_historyLogs.size() > LOG4Z_FORCE_RESERVE_FILE_COUNT)

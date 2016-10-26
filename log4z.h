@@ -271,6 +271,23 @@ const bool LOG4Z_DEFAULT_SHOWSUFFIX = true;
 //! default logger force reserve log file count.
 const size_t LOG4Z_FORCE_RESERVE_FILE_COUNT = 7;
 
+//! a summary of log file management in current approach
+//! -- comments added by Hao Xi (haoxi911@github)
+//! log files will be saved into same folder by default, and optionally, can be separately saved 
+//! into month date based folders. there are some simple rules when `LDT_SET_LOGGER_RESERVETIME` is
+//! set (disabled by default), the library will then check a couple of things after launched, or 
+//! after rolling a new log file:
+//! when history log files exceed `LOG4Z_FORCE_RESERVE_FILE_COUNT`, the code will loop through all
+//! saved history log files, calculate its create date with the `LDT_SET_LOGGER_RESERVETIME` interval
+//! if the file is older than the interval, it will be removed from disk.
+//! however, if the history log files count is not exceeded `LOG4Z_FORCE_RESERVE_FILE_COUNT`, nothing
+//! would happen, even some of the log files are already older than the reserve time.
+//! note: these rules were applied to all the new / rolled log files across their directories.
+
+//! the following config is a simple feature which allows user to limit the maximum log file count in
+//! a folder based manner. it is implemented for WIN32 only, and can be disabled by setting to zero.
+const int LOG4Z_LOG_MAXIMUM_FILE_COUNT_PER_FOLDER = 5;
+
 ///////////////////////////////////////////////////////////////////////////
 //! -----------------------------------------------------------------------
 //////////////////////////////////////////////////////////////////////////
