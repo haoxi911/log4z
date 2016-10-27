@@ -1772,7 +1772,7 @@ bool LogerManager::openLogger(LogData * pLog)
 			WIN32_FIND_DATAA fdd;
 			HANDLE hFind;
 
-			hFind = ::FindFirstFileA((folderPath + "*.log").c_str(), &fdd);
+			hFind = ::FindFirstFileA((folderPath + _proName + "_*.log").c_str(), &fdd);
 			if (INVALID_HANDLE_VALUE != hFind)
 			{
 				do logFiles.push_back(std::make_pair(fdd.ftCreationTime, folderPath + fdd.cFileName));
