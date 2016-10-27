@@ -1496,6 +1496,7 @@ bool LogerManager::pushLog(LogData * pLog, const char * file, int line)
         if (openLogger(pLog))
         {
             _loggers[pLog->_id]._handle.write(pLog->_content, pLog->_contentLen);
+            _loggers[pLog->_id]._curWriteLen += (unsigned int)pLog->_contentLen;
             closeLogger(pLog->_id);
             _ullStatusTotalWriteFileCount++;
             _ullStatusTotalWriteFileBytes += pLog->_contentLen;
@@ -1698,11 +1699,16 @@ bool LogerManager::openLogger(LogData * pLog)
         {
             pLogger->_handle.close();
         }
+		pLogger->_curFileCreateTime = 0;
+		pLogger->_curWriteLen = 0;
     }
     if (!pLogger->_handle.isOpen())
     {
-        pLogger->_curFileCreateTime = pLog->_time;
-        pLogger->_curWriteLen = 0;
+		if (pLogger->_curFileCreateTime == 0)
+		{
+			pLogger->_curFileCreateTime = pLog->_time;
+			pLogger->_curWriteLen = 0;
+		}
 
         tm t = timeToTm(pLogger->_curFileCreateTime);
         std::string name;
