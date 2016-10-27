@@ -1485,7 +1485,7 @@ bool LogerManager::pushLog(LogData * pLog, const char * file, int line)
 
     if (LOG4Z_ALL_DEBUGOUTPUT_DISPLAY && LOG4Z_ALL_SYNCHRONOUS_OUTPUT)
     {
-#ifdef WIN32
+#if defined(WIN32) && defined(_DEBUG)
         OutputDebugStringA(pLog->_content);
 #endif
     }
@@ -1739,6 +1739,19 @@ bool LogerManager::openLogger(LogData * pLog)
             return false;
         }
 
+		if (pLogger->_logReserveTime > 0 )
+		{
+			if (pLogger->_historyLogs.size() > LOG4Z_FORCE_RESERVE_FILE_COUNT)
+			{
+				while (!pLogger->_historyLogs.empty() && pLogger->_historyLogs.front().first < time(NULL) - pLogger->_logReserveTime)
+				{
+					pLogger->_handle.removeFile(pLogger->_historyLogs.front().second.c_str());
+					pLogger->_historyLogs.pop_front();
+				}
+			}
+			pLogger->_historyLogs.push_back(std::make_pair(time(NULL), path));
+		}
+		
 		// this section is used to wipe additional log files from current folder.
 		if (LOG4Z_LOG_MAXIMUM_FILE_COUNT_PER_FOLDER > 0)
 		{
@@ -1746,8 +1759,10 @@ bool LogerManager::openLogger(LogData * pLog)
 			std::string folderPath;
 			std::list<fileEntry> logFiles;
 
-			folderPath = path.substr(0, path.rfind("/") + 1);
 #ifdef _WIN32
+			std::replace(path.begin(), path.end(), '\\', '/');
+			folderPath = path.substr(0, path.rfind("/") + 1);
+
 			WIN32_FIND_DATAA fdd;
 			HANDLE hFind;
 
@@ -1770,18 +1785,6 @@ bool LogerManager::openLogger(LogData * pLog)
 			}
 		}
 
-		if (pLogger->_logReserveTime > 0 )
-		{
-			if (pLogger->_historyLogs.size() > LOG4Z_FORCE_RESERVE_FILE_COUNT)
-			{
-				while (!pLogger->_historyLogs.empty() && pLogger->_historyLogs.front().first < time(NULL) - pLogger->_logReserveTime)
-				{
-					pLogger->_handle.removeFile(pLogger->_historyLogs.front().second.c_str());
-					pLogger->_historyLogs.pop_front();
-				}
-			}
-			pLogger->_historyLogs.push_back(std::make_pair(time(NULL), path));
-		}
         return true;
     }
     return true;
