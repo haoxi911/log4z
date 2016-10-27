@@ -250,7 +250,7 @@ const int LOG4Z_LOG_QUEUE_LIMIT_SIZE = 10000;
 //! all logger synchronous output or not
 const bool LOG4Z_ALL_SYNCHRONOUS_OUTPUT = true;
 //! all logger synchronous display to the windows debug output
-const bool LOG4Z_ALL_DEBUGOUTPUT_DISPLAY = true;
+const bool LOG4Z_ALL_DEBUGOUTPUT_DISPLAY = false;
 
 //! default logger output file.
 const char* const LOG4Z_DEFAULT_PATH = "./log/";

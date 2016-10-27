@@ -1485,7 +1485,7 @@ bool LogerManager::pushLog(LogData * pLog, const char * file, int line)
 
     if (LOG4Z_ALL_DEBUGOUTPUT_DISPLAY && LOG4Z_ALL_SYNCHRONOUS_OUTPUT)
     {
-#if defined(WIN32) && defined(_DEBUG)
+#ifdef WIN32
         OutputDebugStringA(pLog->_content);
 #endif
     }
